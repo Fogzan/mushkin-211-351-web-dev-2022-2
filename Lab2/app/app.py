@@ -75,6 +75,7 @@ def phone():
                     int(simvol)
                 except ValueError:
                     errormsg.append("Недопустимый ввод. В номере телефона встречаются недопустимые символы.")
+                    true_phone = False
 
         if (len(n_phone) > 0):
             if (n_phone[0] == '8'):
