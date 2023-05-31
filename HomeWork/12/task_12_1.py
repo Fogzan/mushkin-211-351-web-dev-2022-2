@@ -23,7 +23,9 @@ def ping_ip_addresses(list_ip):
     ping = []
     no_ping = []
     for ip in list_ip:
-        result = subprocess.run("ping {}".format(ip))
+        # result = subprocess.run("ping {}".format(ip))
+        to_subprocess = ['ping', ip]
+        result = subprocess.run(to_subprocess)
         if result.returncode == 0:
             ping.append(ip)
         elif not result.returncode == 0:
@@ -32,5 +34,5 @@ def ping_ip_addresses(list_ip):
     return res
 
 if __name__ == "__main__":
-    list_ip = ["5.255.255.242", "192.168.0.1"]
+    list_ip = ["5.255.255.242", "192.168.0.1", "62.122.170.171", "1.255.2.255"]
     print(ping_ip_addresses(list_ip))

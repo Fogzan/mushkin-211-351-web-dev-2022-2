@@ -48,6 +48,6 @@ def get_int_vlan_map(config_filename):
                 access_dictionary[interface] = 1
     print("access_dictionary:\n", access_dictionary)
     print("trunk_dictionary:\n", trunk_dictionary)
-    return tuple(access_dictionary, trunk_dictionary)
+    return (access_dictionary, trunk_dictionary)
 
 get_int_vlan_map("09_functions\config_sw2.txt")
