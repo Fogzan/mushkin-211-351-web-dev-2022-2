@@ -34,7 +34,6 @@ R6           Fa 0/2          143           R S I           2811       Fa 0/0
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
 
-
 def parse_cdp_neighbors(show):
     with open(show) as file:
         show = file.read()
@@ -58,6 +57,5 @@ def parse_cdp_neighbors(show):
                 q[main_tuple] = second_tuple
     return q
 if __name__ == "__main__":
-    q = parse_cdp_neighbors('sw1_sh_cdp_neighbors.txt')
+    q = parse_cdp_neighbors('sh_cdp_n_sw1.txt')
     print(q)
-

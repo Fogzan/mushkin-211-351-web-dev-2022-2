@@ -24,7 +24,8 @@ def ping_ip_addresses(list_ip):
     no_ping = []
     for ip in list_ip:
         # result = subprocess.run("ping {}".format(ip))
-        to_subprocess = ['ping', ip]
+        # to_subprocess = ['ping', ip]
+        to_subprocess = ['ping', ip, '-n', '1']
         result = subprocess.run(to_subprocess)
         if result.returncode == 0:
             ping.append(ip)

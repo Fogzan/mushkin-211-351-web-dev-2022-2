@@ -32,17 +32,17 @@ Cгенерировать топологию, которая соответст�
 from task_11_1 import parse_cdp_neighbors
 
 infiles = [
-    "11_modules\sh_cdp_n_sw1.txt",
-    "11_modules\sh_cdp_n_r1.txt",
-    "11_modules\sh_cdp_n_r2.txt",
-    "11_modules\sh_cdp_n_r3.txt",
+    "sh_cdp_n_sw1.txt",
+    "sh_cdp_n_r1.txt",
+    "sh_cdp_n_r2.txt",
+    "sh_cdp_n_r3.txt",
 ]
 
 def create_network_map(filenames):
     res = {}
     for elem_name in filenames:
-        with open(elem_name) as f:
-            res.update(parse_cdp_neighbors(f.read()))
+        print(elem_name)
+        res.update(parse_cdp_neighbors(elem_name))
     return res
 
 if __name__ == "__main__":

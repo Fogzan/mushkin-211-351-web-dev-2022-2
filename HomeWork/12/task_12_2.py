@@ -41,7 +41,7 @@ def convert_ranges_to_ip_list(list_ip):
             elem_ip_split = elem_ip.split("-")[1]
             ip = elem_ip.split("-")[0]
             last_octet = int(ip.split(".")[3])
-            all_octet = [ip.split(".")[0], ip.split(".")[2], ip.split(".")[3]]
+            all_octet = [ip.split(".")[0], ip.split(".")[1], ip.split(".")[2]]
             if len(elem_ip_split.split(".")) > 1: # если имеет вид 172.21.41.128-172.21.41.132
                 for i in range(last_octet, int(elem_ip_split.split(".")[3]) + 1):
                     all_octet.append("{}".format(i))

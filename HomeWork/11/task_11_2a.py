@@ -74,30 +74,23 @@
 
 """
 
-from task_11_1 import parse_cdp_neighbors
+from task_11_2 import create_network_map
 from draw_network_graph import *
-q1 = parse_cdp_neighbors('sh_cdp_n_r1.txt')
-q2 = parse_cdp_neighbors('sh_cdp_n_r2.txt')
-q3 = parse_cdp_neighbors('sh_cdp_n_r3.txt')
-q4 = parse_cdp_neighbors('sh_cdp_n_sw1.txt')
-q = {}
-q.update(q1)
-q.update(q2)
-q.update(q3)
-q.update(q4)
 
-print(q)
+infiles = [
+    "sh_cdp_n_sw1.txt",
+    "sh_cdp_n_r1.txt",
+    "sh_cdp_n_r2.txt",
+    "sh_cdp_n_r3.txt",
+]
 
-s = {} 
-lists = [] 
- 
-for key, value in q.items(): 
-    dic_buffer = {} 
-    key_str = ''.join(list(key)) 
-    value_str = ''.join(list(value)) 
-    if key_str not in ''.join(lists) or value_str not in ''.join(lists):
-        lists.append(key_str) 
-        lists.append(value_str) 
-        s[key] = value
+def unique_network_map(topology_dict):
+    network_map = {}
+    for key, value in topology_dict.items():
+        if not network_map.get(value) == key:
+            network_map[key] = value
+    return network_map
 
-draw_topology(s)
+network_map = unique_network_map(create_network_map(infiles))
+
+draw_topology(network_map)

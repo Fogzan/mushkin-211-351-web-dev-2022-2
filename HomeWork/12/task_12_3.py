@@ -20,7 +20,7 @@ Reachable    Unreachable
 """
 from tabulate import tabulate
 
-def ip_table(list1, list2):
+def print_ip_table(list1, list2):
     res = {'Reachable': [], 'Unreachable': []}
     for i in list1:
         res['Reachable'].append(i)
@@ -30,4 +30,4 @@ def ip_table(list1, list2):
 
 
 if __name__ == "__main__":  
-    ip_table(['172.41.128.128', '172.41.128.129', '172.41.128.130', '172.41.128.131', '172.41.128.132'], ["5.255.255.242", "192.168.0.1"])
+    print_ip_table(['172.41.128.128', '172.41.128.129', '172.41.128.130', '172.41.128.131', '172.41.128.132'], ["5.255.255.242", "192.168.0.1"])
