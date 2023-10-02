@@ -47,7 +47,7 @@ def users():
     query = "SELECT users.*, roles.name as role_name FROM users LEFT JOIN roles on users.role_id=roles.id;"
     with db.connection.cursor(named_tuple = True) as cursor:
         cursor.execute(query)
-        print(cursor.statement)
+        # print(cursor.statement)
         db_users = cursor.fetchall()
     return render_template('users/index.html', users = db_users)
 
@@ -151,7 +151,8 @@ def show_user(user_id):
     
     return render_template('users/show.html', user=db_user)
 
-@app.route("/users/<int:user_id>/delete", methods=['POST'])
+# Методы бвл только POST
+@app.route("/users/<int:user_id>/delete", methods=['GET', 'POST'])
 @login_required
 @check_rights("delete")
 def delete_user(user_id):

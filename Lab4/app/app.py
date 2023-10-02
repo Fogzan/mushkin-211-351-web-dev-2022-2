@@ -7,7 +7,6 @@ app = Flask(__name__)
 application = app
 
 PERMITTED_PARAMS = ["login", "password", "last_name", "first_name", "middle_name", "role_id"]
-PERMITTED_PARAMS_EDIT = ["login", "last_name", "first_name", "middle_name", "role_id"]
 PASSWORD_PARAMS = ["oldPassword", "newPassword", "newPassword1"]
 
 app.config.from_pyfile('config.py')
@@ -40,7 +39,7 @@ def authentificate_user(login, password):
     with db.connection.cursor(named_tuple = True) as cursor:
         cursor.execute(query, (login, password))
         # cursor.execute(query, (login, ))
-        # print(cursor.statement)
+        print(cursor.statement)
         db_user = cursor.fetchone()
     if db_user is not None:
         user = User(db_user.id, db_user.login)
@@ -90,7 +89,7 @@ def users():
     query = "SELECT users.*, roles.name as role_name FROM users LEFT JOIN roles on users.role_id=roles.id;"
     with db.connection.cursor(named_tuple = True) as cursor:
         cursor.execute(query)
-        # print(cursor.statement)
+        print(cursor.statement)
         db_users = cursor.fetchall()
     return render_template('users/index.html', users = db_users)
 
@@ -164,20 +163,7 @@ def test_password(password):
             result += " В пароле недопустимые символы (допустимые символы: ~ ! ? @ # $ % ^ & * _ - + ( ) [ ] { } > < / \\ | \" ' . , : ; )."
         
     return result
-
-def test_login(login):  
-    result = ""
-    alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-
-    if (len(login) < 5):
-        result += " Логин должен иметь длину не менее 5 символов."
-
-    for sim in login:
-        if not(sim.isdigit() or sim in alpha):
-            result += " Логин должен состоять только из латинских букв и цифр."
-            break
-    
-    return result
+        
 
 def list_error(params):
     errors = {}
@@ -192,8 +178,6 @@ def list_error(params):
 
     if 'login' in params.keys() and params['login'] is None:
             errors['login'] = 'Поле не может быть пустым.'
-    # elif test_login(params['login']):
-    #     errors['login'] = 'Логин не удовлетворяет требованиям.' + test_login(params['login'])
     if 'first_name' in params.keys() and params['first_name'] is None:
             errors['first_name'] = 'Поле не может быть пустым.'
     if 'last_name' in params.keys() and params['last_name'] is None:
@@ -207,7 +191,7 @@ def create_user():
     cur_params = params(PERMITTED_PARAMS)
     errors = list_error(cur_params)
     inserted = insert_to_db(cur_params)
-    if inserted and not errors:
+    if inserted:
         flash("Пользователь успешно добавлен", "success")
         return redirect(url_for("users"))
     else:
@@ -230,7 +214,7 @@ def edit_user(user_id):
 @app.route('/users/<int:user_id>/update', methods=['POST'])
 @login_required
 def update_user(user_id):
-    cur_params = params(PERMITTED_PARAMS_EDIT)
+    cur_params = params(PERMITTED_PARAMS)
     errors = list_error(cur_params)
     cur_params["id"] = user_id
     update_query = """
@@ -238,8 +222,6 @@ def update_user(user_id):
     first_name = %(first_name)s, middle_name = %(middle_name)s,
     role_id = %(role_id)s WHERE id = %(id)s;
     """
-    if errors:
-        return render_template('users/edit.html', user=cur_params, roles=load_roles(), errors = errors) 
     try:
         with db.connection.cursor(named_tuple = True) as cursor:
             cursor.execute(update_query, cur_params)
@@ -316,7 +298,6 @@ def re_password(user_id):
                     cursor.execute(update_query, (passwords["newPassword"], user_id))
                     db.connection.commit()
                 flash("Пользователь успешно обновлен", "success")
-                return render_template('index.html', passwords=passwords, errors=errors)
             except mysql.connector.errors.DatabaseError:
                 flash("При изменении возникла ошибка", "danger")
                 db.connection.rollback()

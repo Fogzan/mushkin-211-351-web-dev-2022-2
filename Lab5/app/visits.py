@@ -2,7 +2,7 @@ import math
 import io
 import csv
 
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, render_template, request, send_file, current_app
 from flask_login import login_required, current_user
 from app import db
 from auth import check_rights
@@ -24,7 +24,7 @@ def stat():
     '''
     with db.connection.cursor(named_tuple = True) as cursor:
         cursor.execute(query)
-        print(cursor.statement)
+        # print(cursor.statement)
         db_stat = cursor.fetchall()
     if download_status:
         f = io.BytesIO()
@@ -50,7 +50,7 @@ def stat_users():
     '''
     with db.connection.cursor(named_tuple = True) as cursor:
         cursor.execute(query)
-        print(cursor.statement)
+        # print(cursor.statement)
         db_stat = cursor.fetchall()
     
     if download_status:
@@ -76,22 +76,40 @@ def stat_users():
 @login_required
 def logs():
     page = request.args.get('page', 1, type=int)
-    query = '''
-    SELECT visit_logs.*, users.login
-    FROM visit_logs
-    LEFT JOIN users ON visit_logs.user_id = users.id
-    LIMIT %s
-    OFFSET %s
-    '''
-    query_counter = 'SELECT count(*) as page_count FROM visit_logs'
+    is_admin = current_user.role_id == current_app.config["ADMIN_ROLE_ID"]
+    if is_admin:
+        query = '''
+        SELECT visit_logs.*, users.login
+        FROM visit_logs
+        LEFT JOIN users ON visit_logs.user_id = users.id
+        LIMIT %s
+        OFFSET %s
+        '''
+        query_counter = 'SELECT count(*) as page_count FROM visit_logs'
+    else:
+        query = '''
+        SELECT visit_logs.*, users.login
+        FROM visit_logs
+        LEFT JOIN users ON visit_logs.user_id = users.id
+        WHERE users.login = %s
+        LIMIT %s
+        OFFSET %s
+        '''
+        query_counter = 'SELECT count(*) as page_count FROM visit_logs WHERE visit_logs.user_id = %s'
     with db.connection.cursor(named_tuple = True) as cursor:
-        cursor.execute(query,(PER_PAGE, PER_PAGE * (page - 1)))
-        print(cursor.statement)
+        if is_admin:
+            cursor.execute(query,(PER_PAGE, PER_PAGE * (page - 1)))
+        else:
+            cursor.execute(query,(str(current_user.login), PER_PAGE, PER_PAGE * (page - 1)))
+        # print(cursor.statement)
         db_logs = cursor.fetchall()
 
     with db.connection.cursor(named_tuple = True) as cursor:
-        cursor.execute(query_counter)
-        print(cursor.statement)
+        if is_admin:
+            cursor.execute(query_counter)
+        else:   
+            cursor.execute(query_counter, (str(current_user.id),))
+        # print(cursor.statement)
         db_counter = cursor.fetchone().page_count
     
     page_count = math.ceil(db_counter / PER_PAGE)

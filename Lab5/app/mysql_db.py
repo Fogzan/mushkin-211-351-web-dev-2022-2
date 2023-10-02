@@ -17,7 +17,8 @@ class MySQL:
             'user': self.app.config["MYSQL_USER"],
             'password': self.app.config["MYSQL_PASSWORD"], 
             'host': self.app.config["MYSQL_HOST"],
-            'database': self.app.config["MYSQL_DATABASE"]
+            'database': self.app.config["MYSQL_DATABASE"],
+            'raise_on_warnings': True,
         }
 
     def close_connection(self, e=None):
